@@ -1,7 +1,7 @@
 function createPlayer(symbol) {
     const placeMove = (gameboard, x, y) => {
         let board = gameboard.board;
-        if (x < 0 || x >= 3 || y < 0 || y >+ 3 || board[x][y] != 0) {
+        if (board[x][y] != 0) {
             return -1;
         }
         board[x][y] = symbol;
@@ -62,29 +62,67 @@ const gameboard = (function(player1, player2) {
 })(player1, player2);
 
 const displayController = (function (gameboard, player1, player2) {
-    
+    let gameDone = false;
     const controlDisplay = () => {
         const button = document.querySelector("button");
-        let move = player1;
-        console.log(move.symbol);
         button.addEventListener("click", () => {
-            while (true) {
-                let x = prompt("x coordinate of grid");
-                let y = prompt("y coordinate of grid");
+            gameDone = false;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    gameboard.board[i][j] = 0;
+                    const square = document.querySelector("#grid" + (i * 3 + j));
+                    square.innerHTML = "";
+                    document.querySelector(".winner").innerHTML = "Winner:";
+                    document.querySelector(".turn").innerHTML = "Turn: player 1";
+                    if (square.classList.contains("red")) {
+                        square.classList.remove("red");
+                    }
+                    if (square.classList.contains("blue")) {
+                        square.classList.remove("blue");
+                    }
+                }
+            }
+        })
+        let move = player1;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const num = i * 3 + j;
+                const square = document.querySelector("#grid" + num);
+                square.addEventListener("click", () => {
+                    addButton(i, j);
+                })
+            }
+        }
+        function addButton(x, y) {
+            while (!gameDone) {
                 if (move.placeMove(gameboard, x, y) != 1) {
                     alert("Move is illegal!");
-                    continue;
+                    break;
                 }
                 const box = document.querySelector("#grid" + (Number(x*3) + Number(y)));
                 box.innerHTML = move.symbol;
+                if (move == player1) {
+                    box.classList.add("blue");
+                } else {
+                    box.classList.add("red");
+                }
                 if (gameboard.win() == 1) {
+                    gameDone = true;
                     break;
                 }
-                if (move == player1) move = player2;
-                else move = player1;
+                if (move == player1) {
+                    move = player2;
+                    document.querySelector(".turn").innerHTML = "Turn: player 2";
+                }
+                else 
+                {
+                    move = player1;
+                    document.querySelector(".turn").innerHTML = "Turn: player 1";
+                }
                 break;
             }
-        })
+        }
+        
     }
     return {controlDisplay};
 })(gameboard, player1, player2);
