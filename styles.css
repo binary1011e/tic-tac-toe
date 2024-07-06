@@ -1,0 +1,15 @@
+.grid {
+    display: grid;
+    grid-template-columns: 50px 50px 50px;
+    grid-template-rows: 50px 50px 50px;
+}
+.box {
+    border: 1px solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.winner {
+    box-sizing: border-box;
+    font-size: 2rem;
+}
